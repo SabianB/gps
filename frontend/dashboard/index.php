@@ -116,9 +116,8 @@ $response = serverQueryNoToken(array(
 <script src="../plugins/datatables/dataTables.bootstrap4.min.js"></script>
 
 <!-- Pages js -->
-<script src="js/pages/compras.js"></script>
-<script src="js/pages/productos.js"></script>
 <script src="js/pages/mapa.js"></script>
+<script src="js/pages/estacionamiento/estacionamiento.js"></script>
 
 <!--OpenStreetMaps - Leaflet-->
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -164,7 +163,6 @@ $response = serverQueryNoToken(array(
                 break;
             case "#historial":
                 loadPage('pages/historial/index.php');
-                objMapa.IniciarMapa();
                 break;
             case "#tracking":
                 loadPage('pages/tracking/index.php');
@@ -181,18 +179,14 @@ $response = serverQueryNoToken(array(
             case "#clientes":
                 loadPage('pages/clientes/index.php');
                 break;
-            case "#finalizar_compra":
-                if(hashValue){
-                    showLoading('Cargando datos...');
-                    loadPage(`pages/compras/finalizar_compra.php?id=${hashValue}`,undefined,async () => {
-                        await loadPage(`pages/resumen_handler.php?id_compra=${hashValue}`, 'resumen_compra_finalizar_compra',async () => {
-                            await loadPage(`pages/compras/subir_comprobante.php?id=${hashValue}`, 'subir_comprobante_finalizar_compra');
-                        },false);
-                    },false);
-                }else{
-                    window.location.hash = 'compras';
-                }
-                break;
+            // case "#estacionamiento":
+            //     if(hashValue){
+            //         showLoading('Cargando datos...');
+            //         loadPage(`pages/estadisticas/estacionamiento_handler.php?id=${hashValue}`);
+            //     }else{
+            //         window.location.hash = 'estacionamiento';
+            //     }
+            //     break;
             default:
                 window.location.hash = "dashboard";
                 break;

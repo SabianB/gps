@@ -17,9 +17,6 @@ $response = serverQuery($token, array(
 
 ?>
 
-
-
-
 <body>
 <div class="row">
     <div class="col-sm-12">
@@ -53,18 +50,59 @@ $response = serverQuery($token, array(
             </div>
             <div class="row mt-3">
                 <div class="col text-center">
-                    <button class="btn btn-success" onclick="">Buscar</button>
+                    <label for="tiempo" class="form-label">Tiempo minimo estacionado (Minutos)</label>
+                    <input type="number" class="form-control" id="tiempo" value="5">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col text-center">
+                    <button class="btn btn-success" onclick="objEst.search(fechaini, fechafin, getElementById('tiempo').value, false, true)">Buscar</button>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-lg-10">
-        <div id="map"></div>
+        <div >
+            <div class="card mb3">
+                <div class="card-body">
+                    <div id="containerTableItems" class="table-responsive">
+                        <table id="parktable" class="table table-bordered dt-responsive nowrap"
+                               style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead>
+                            <tr>
+                                <th>Latitud</th>
+                                <th>Longitud</th>
+                                <th>Inicio del estacionamiento</th>
+                                <th>Fin del estacionamiento</th>
+                                <th>Ver en el mapa</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Sin registros</td>
+                                <td>Sin registros</td>
+                                <td>Sin registros</td>
+                                <td>Sin registros</td>
+                                <td>Sin registros</td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
+
+
 </div>
 
 <script>
-    objMapa.IniciarMapa();
+    initDataTable('parktable');
+    //objMapa.IniciarMapa();
+
+
 
     var fechaInput = document.getElementById("fechaInicio");
     var fechaInputFin = document.getElementById("fechaFin");

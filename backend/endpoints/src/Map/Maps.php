@@ -15,6 +15,7 @@ use Roles;
 use utils\Functions;
 use utils\ServerData;
 use api\JWTConfig;
+use function MongoDB\BSON\toJSON;
 
 class Maps extends EndPoint{
     public function __construct(Request $request, Response $response)
@@ -57,13 +58,42 @@ class Maps extends EndPoint{
         $latitud = $this->request->getValue('latitud');
         $longitud = $this->request->getValue('longitud');
         $date = ServerData::getDate(true);
+        $apiosm = "https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitud&lon=$longitud"; //API DE OPENSTREETMAPS PARA DATOS DE DIRECCION
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $apiosm);
+        $headers = array(
+            'authority: nominatim.openstreetmap.org',
+            'method: GET',
+            'scheme: https',
+            'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Encoding: gzip, deflate, br',
+            'Accept-Language: es,es-ES;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+            'Cache-Control: max-age=0',
+            'Sec-Ch-Ua: "Not/A)Brand";v="99", "Microsoft Edge";v="115", "Chromium";v="115"',
+            'Sec-Ch-Ua-Mobile: ?0',
+            'Sec-Ch-Ua-Platform: "Windows"',
+            'Sec-Fetch-Dest: document',
+            'Sec-Fetch-Mode: navigate',
+            'Sec-Fetch-Site: none',
+            'Sec-Fetch-User: ?1',
+            'Upgrade-Insecure-Requests: 1',
+            'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188'
+        );
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $jsonResponse = curl_exec($ch);
+        curl_close($ch);
+        $dataArray = json_decode($jsonResponse, true);
+        $ciudad = $dataArray['address']['county'];
         $this->getSQLDatabase()->dbCreate('registros', [
             'latitud' => $latitud,
             'longitud' => $longitud,
             'id_usuario' => $id_usuario,
-            'fecha' => $date
+            'fecha' => $date,
+            'ciudad' => $ciudad
         ]);
         $this->response->addValue('message', "Coordenadas registradas exitosamente")->printResponse();
+
     }
 
     public function ObtenerCoordenadas(){
@@ -109,8 +139,11 @@ class Maps extends EndPoint{
     public function Estacionamiento(){
         $this->request->checkInput([
             'fecha_inicio' => DataTypes::string,
-            'fecha_fin' => DataTypes::string
+            'fecha_fin' => DataTypes::string,
+            'minutos' => DataTypes::integer
         ], true);
+        $minutos = $this->request->getValue('minutos');
+        $minutos = $minutos * 60;
         $payload = $this->request->getPayload();
         $usuario_id = $payload['id'];
         $fecha_inicio = $this->request->getValue('fecha_inicio');
@@ -120,7 +153,7 @@ class Maps extends EndPoint{
             'longitud',
             'fecha'
         ], "WHERE id_usuario = $usuario_id AND fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'" );
-        if(count($data) === 0){
+        if(count($data) < 2){
             $this->response->printError("No se han encontrado estacionamientos en las fechas indicadas");
         }
         //$idcoordenada = $data[0]['id'];
@@ -129,22 +162,39 @@ class Maps extends EndPoint{
         for ($i = 1; $i< count($data); $i++){
             if(($data[$i]['latitud'] == $data[$i-1]['latitud']) && ($data[$i]['longitud'] == $data[$i-1]['longitud'])){
                 array_push($itemestacionamiento, $data[$i-1]);
+                if(count($data) == $i+1){
+                    array_push($itemestacionamiento, $data[$i]);
+                    $fecha1 = new \DateTime($itemestacionamiento[0]['fecha']);
+                    $fecha2 = new \DateTime($itemestacionamiento[count($itemestacionamiento)-1]['fecha']);
+                    $diferencia = $fecha1->diff($fecha2);
+                    $totalSegundos = $diferencia->s + ($diferencia->i * 60) + ($diferencia->h * 3600) + ($diferencia->days * 86400);
+                    if($totalSegundos > $minutos){
+                        $itemestacionamiento[0]["fecha_fin"] = $itemestacionamiento[count($itemestacionamiento)-1]['fecha'];
+                        array_push($estacionamientos, $itemestacionamiento[0]);
+                    }
+                    $itemestacionamiento = [];
+                }
             }
             else{
                 if(count($itemestacionamiento) > 0){
                     array_push($itemestacionamiento, $data[$i-1]);
+                    $fecha1 = new \DateTime($itemestacionamiento[0]['fecha']);
+                    $fecha2 = new \DateTime($itemestacionamiento[count($itemestacionamiento)-1]['fecha']);
+                    $diferencia = $fecha1->diff($fecha2);
+                    $totalSegundos = $diferencia->s + ($diferencia->i * 60) + ($diferencia->h * 3600) + ($diferencia->days * 86400);
+                    if($totalSegundos > $minutos){
+                        $itemestacionamiento[0]["fecha_fin"] = $itemestacionamiento[count($itemestacionamiento)-1]['fecha'];
+                        array_push($estacionamientos, $itemestacionamiento[0]);
+                    }
+                    $itemestacionamiento = [];
                 }
-                $fecha1 = new \DateTime($data[0]['fecha']);
-                $fecha2 = new \DateTime($data[count($data)-1]['fecha']);
-                $diferencia = $fecha1->diff($fecha2);
-                $totalSegundos = $diferencia->s + ($diferencia->i * 60) + ($diferencia->h * 3600) + ($diferencia->days * 86400);
-                if($totalSegundos > 300){
-                    array_push($estacionamientos, [$fecha1, $fecha2['fecha']]);
-                }
-                
             }
         }
-        $this->response->addValue('data', $estacionamientos)->printResponse();
+        if(count($estacionamientos) === 0){
+            $this->response->printError("No se han encontrado estacionamientos en las fechas indicadas");
+        }else{
+            $this->response->addValue('data', $estacionamientos)->printResponse();
+        }
     }
 
 

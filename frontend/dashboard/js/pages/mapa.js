@@ -67,7 +67,7 @@ class Mapa {
         clearInterval(this.intervalo);
     }
 
-    async Estacionamientos(inicio,fin){
+    async Estacionamientos(inicio,fin, tiempo){
 
     }
 
