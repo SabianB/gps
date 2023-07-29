@@ -1,0 +1,4 @@
+.swal2-with-backdrop {
+    background-color: rgba(150, 148, 148, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+}

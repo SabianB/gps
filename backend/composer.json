@@ -1,0 +1,21 @@
+{
+  "name": "brandon_zambrano/empiric",
+  "description": "A simple framework to develop API'S as fast as possible",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Brandon",
+      "email": "zambrano-brandon2621@unesum.edu.ec"
+    }
+  ],
+  "require": {
+    "phpmailer/phpmailer": "^6.1",
+    "firebase/php-jwt": "^5.2",
+    "ext-curl": "*",
+    "ext-json": "*",
+    "ext-mysqli": "*",
+    "ext-mbstring": "*",
+    "twig/twig": "^3.0",
+    "ext-pdo": "*"
+  }
+}

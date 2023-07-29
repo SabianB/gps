@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * This file contains settings that need to be used to make the system work
+ * some settings are mandatory to make the framework usable
+ */
+
+$protocol = strpos(strtolower($_SERVER['SERVER_PROTOCOL']), 'https') === FALSE ? 'http' : 'https';
+$domainLink = $protocol . '://' . $_SERVER['HTTP_HOST'];
+//$folderPath = '';
+$folderPath = "gps";
+$structureFolderPath = "C:/xampp/htdocs/"; //LOCAL
+//$structureFolderPath = "/var/www/"; //SERVER
+
+$configs = [
+    'app' => [
+        'company' => 'Empiric FrameWork',
+        'defaultTimeZone' => 'America/Guayaquil'
+    ],
+    //Tested engines [mysql,sqlsrv]
+    'database' => [
+        'engine' => 'mysql',
+        'host' => ['host', 'localhost'],
+        'database' => ['dbname', 'gps'],
+        'username' => 'root',
+        'password' => '',
+    ],
+    'smtp' => [
+        'host' => 'smtp.ionos.es',
+        'port' => 587,
+        'account_name' => '',
+        'address' => '',
+        'password' => '*'
+    ],
+    'paths' => [
+        'log' => '',
+        'resources' => "$structureFolderPath$folderPath/backend/resources",
+        'tempFiles' => "$structureFolderPath$folderPath/backend/tempFiles",
+        'webFrontend' => "$domainLink/$folderPath/frontend/dashboard/",
+        //'completarCompra' => "$domainLink/$folderPath/frontend/dashboard#finalizar_compra="
+    ],
+    'tokens' => [
+        'free-currconv' => '8218b65f2f087ceff613'
+    ]
+];
