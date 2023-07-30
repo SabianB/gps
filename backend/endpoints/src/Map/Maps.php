@@ -140,10 +140,15 @@ class Maps extends EndPoint{
         $this->request->checkInput([
             'fecha_inicio' => DataTypes::string,
             'fecha_fin' => DataTypes::string,
-            'minutos' => DataTypes::integer
+            'minutos' => DataTypes::integer,
+            'horario_salida' => DataTypes::boolean
         ], true);
+        $horarios_salida = $this->request->getValue('horario_salida');
         $minutos = $this->request->getValue('minutos');
         $minutos = $minutos * 60;
+        if($horarios_salida){
+            $minutos = 5 * 60;
+        }
         $payload = $this->request->getPayload();
         $usuario_id = $payload['id'];
         $fecha_inicio = $this->request->getValue('fecha_inicio');
@@ -197,5 +202,174 @@ class Maps extends EndPoint{
         }
     }
 
+    public function Velocidad(){
+        $this->request->checkInput([
+            'fecha_inicio' => DataTypes::string,
+            'fecha_fin' => DataTypes::string
+        ], true);
+        $payload = $this->request->getPayload();
+        $usuario_id = $payload['id'];
+        $fecha_inicio = $this->request->getValue('fecha_inicio');
+        $fecha_fin = $this->request->getValue('fecha_fin');
+        $data = $this->getSQLDatabase()->dbRead('registros', [
+            'latitud',
+            'longitud',
+            'fecha'
+        ], "WHERE id_usuario = $usuario_id AND fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'" );
+        if(count($data) < 2){
+            $this->response->printError("No se han encontrado suficientes localizaciones para tomar la velocidad");
+        }
+        $coordenadas = $data;
+
+        $velocidadMaxima = 0;
+        $velocidadMinima = PHP_INT_MAX;
+        $distanciaTotal = 0;
+        $tiempoTotal = 0;
+        $registros = [];
+        for ($i = 0; $i < count($coordenadas) - 1; $i++) {
+            $lat1 = deg2rad($coordenadas[$i]['latitud']);
+            $lon1 = deg2rad($coordenadas[$i]['longitud']);
+            $lat2 = deg2rad($coordenadas[$i + 1]['latitud']);
+            $lon2 = deg2rad($coordenadas[$i + 1]['longitud']);
+
+            $distancia = 6371 * acos(sin($lat1) * sin($lat2) + cos($lat1) * cos($lat2) * cos($lon2 - $lon1));
+            $tiempo = strtotime($coordenadas[$i + 1]['fecha']) - strtotime($coordenadas[$i]['fecha']);
+            $velocidad = $distancia / ($tiempo / 3600); // Convertir el tiempo a horas
+            $reg = [
+                'lat_inicio' => $coordenadas[$i]['latitud'],
+                'lon_inicio' => $coordenadas[$i]['longitud'],
+                'fecha_inicio' => $coordenadas[$i]['fecha'],
+                'lat_fin' => $coordenadas[$i + 1]['latitud'],
+                'lon_fin' => $coordenadas[$i + 1]['longitud'],
+                'fecha_fin' => $coordenadas[$i + 1]['fecha'],
+                'velocidad' => $velocidad
+            ];
+            array_push($registros,$reg);
+
+            $distanciaTotal += $distancia;
+            $tiempoTotal += $tiempo;
+            $velocidadMaxima = max($velocidadMaxima, $velocidad);
+            $velocidadMinima = min($velocidadMinima, $velocidad);
+            // Calcular la velocidad promedio
+            $velocidadPromedio = $distanciaTotal / ($tiempoTotal / 3600); // Convertir el tiempo a horas
+        }
+
+        $this->response->addValue('data', [
+            'velocidad_max' => $velocidadMaxima,
+            'velocidad_min' => $velocidadMinima,
+            'velocidad_med' => $velocidadPromedio,
+            'coordenadas' => $registros
+        ])->printResponse();
+
+
+
+    }
+
+    public function Ciudades(){
+        $this->request->checkInput([
+            'fecha_inicio' => DataTypes::string,
+            'fecha_fin' => DataTypes::string
+        ], true);
+        $payload = $this->request->getPayload();
+        $usuario_id = $payload['id'];
+        $fecha_inicio = $this->request->getValue('fecha_inicio');
+        $fecha_fin = $this->request->getValue('fecha_fin');
+        $data = $this->getSQLDatabase()->dbRead('registros', [
+            'fecha',
+            'ciudad'
+        ], "WHERE id_usuario = $usuario_id AND fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'" );
+
+        if(count($data) === 0){
+            $this->response->printError("No se han encontrado registros en las fechas indicadas");
+        }
+        $primerosUltimosRegistros = array();
+        $ciudadActual = null;
+        $contador = -1;
+
+        foreach ($data as $registro) {
+            $ciudad = $registro["ciudad"];
+
+            if ($ciudadActual !== $ciudad) {
+                $ciudadActual = $ciudad;
+                $contador++;
+                $primerosUltimosRegistros[$contador]["ciudad"] = $ciudad;
+                $primerosUltimosRegistros[$contador]["primer_registro"] = $registro;
+            }
+
+            $primerosUltimosRegistros[$contador]["ultimo_registro"] = $registro;
+        }
+        $this->response->addValue('data', $primerosUltimosRegistros)->printResponse();
+    }
+
+    public function Estacionamiento2(){
+        $this->request->checkInput([
+            'fecha_inicio' => DataTypes::string,
+            'fecha_fin' => DataTypes::string,
+            'minutos' => DataTypes::integer,
+            'horario_salida' => DataTypes::boolean
+        ], true);
+        $horarios_salida = $this->request->getValue('horario_salida');
+        $minutos = $this->request->getValue('minutos');
+        $minutos = $minutos * 60;
+        if($horarios_salida){
+            $minutos = 5 * 60;
+        }
+        $payload = $this->request->getPayload();
+        $usuario_id = $payload['id'];
+        $fecha_inicio = $this->request->getValue('fecha_inicio');
+        $fecha_fin = $this->request->getValue('fecha_fin');
+        $data = $this->getSQLDatabase()->dbRead('registros', [
+            'latitud',
+            'longitud',
+            'fecha'
+        ], "WHERE id_usuario = $usuario_id AND fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'" );
+        if(count($data) < 2){
+            $this->response->printError("No se han encontrado estacionamientos en las fechas indicadas");
+        }
+
+        $primerosUltimosRegistros = array();
+        $latitudActual = null;
+        $longitudActual = null;
+        $results = [];
+        $contador = -1;
+
+        foreach ($data as $registro) {
+            $latitud = $registro["latitud"];
+            $longitud = $registro["longitud"];
+            $fecha = $registro["fecha"];
+
+            if ($latitudActual !== $latitud || $longitudActual !== $longitud) {
+                $latitudActual = $latitud;
+                $longitudActual = $longitud;
+                $contador++;
+                $primerosUltimosRegistros[$contador]["latitud"] = $latitud;
+                $primerosUltimosRegistros[$contador]["longitud"] = $longitud;
+                $primerosUltimosRegistros[$contador]["primer_registro"] = $fecha;
+                $primerosUltimosRegistros[$contador]["ultimo_registro"] = $fecha;
+                if($contador > 0){
+                    if ($this->diferenciaSegundos($primerosUltimosRegistros[$contador-1]["primer_registro"], $fecha) >= $minutos) {
+                        array_push($results, $primerosUltimosRegistros[$contador-1]);
+                    }
+                }
+
+            }
+            $primerosUltimosRegistros[$contador]["ultimo_registro"] = $fecha;
+            if($data[count($data)-1] === $registro){
+                if ($this->diferenciaSegundos($primerosUltimosRegistros[$contador]["primer_registro"], $fecha) >= $minutos ) {
+                    array_push($results, $primerosUltimosRegistros[$contador]);
+                }
+            }
+        }
+        $this->response->addValue('data', $results)->printResponse();
+
+    }
+
+    function diferenciaSegundos($fechaInicio, $fechaFin) {
+        $inicio = new \DateTime($fechaInicio);
+        $fin = new \DateTime($fechaFin);
+        $diferencia = $inicio->diff($fin);
+        $totalSegundos = $diferencia->s + ($diferencia->i * 60) + ($diferencia->h * 3600) + ($diferencia->days * 86400);
+        return $totalSegundos; // Devuelve la diferencia en segundos
+    }
 
 }

@@ -20,9 +20,9 @@ async search(fechaInicio, fechaFin, minutos, showSweeetAlert = false, showCustom
         showLoading('Cargando datos, por favor espere...', undefined, true);
     }
     if (showCustomLoader) {
-        showCustomLoader = 'estacionamiento_container';
+        showCustomLoader = 'containerTableItems';
     }
-    await loadPage('pages/estadisticas/estacionamiento_handler.php', 'estacionamiento_container', () => {
+    await loadPage('pages/estadisticas/estacionamiento_handler.php', 'containerTableItems', () => {
         actionAfterSearchComplete();
     }, showSweeetAlert, showCustomLoader, {
         'fecha_inicio': fechaInicio,
