@@ -23,6 +23,20 @@ class Mapa {
     }
 
     async HistorialRecorrido(inicio, fin){
+        if (inicio === undefined) {
+            showMessage('No se ha colocado una fecha de inicio para poder realizar la busqueda.', 'error');
+            return;
+        }
+        if (fin === undefined) {
+            showMessage('No se ha colocado una fecha de fin para poder realizar la busqueda.', 'error');
+            return;
+        }
+        var fechaInicio2 = new Date(fechaInicio);
+        var fechaFin2 = new Date(fechaFin);
+        if (fechaFin2 < fechaInicio2) {
+            showMessage('La fecha de inicio no puede ser mayor a la fecha de fin.', 'error');
+            return;
+        }
         this.route = L.featureGroup().addTo(this.map);
         var marker1;
         $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();

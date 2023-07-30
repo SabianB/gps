@@ -15,19 +15,12 @@ $response = serverQuery($token, array(
     'token' => $token
 ));
 
-$response = serverQuery($token, array(
-    'endpoint' => 'Maps',
-    'action' => 'ObtenerCoordenadas',
-    'token' => $token
-));
-
-print_r($response);
 ?>
 
 
 
 <body>
 
-
+Inicio
 
 </body>
