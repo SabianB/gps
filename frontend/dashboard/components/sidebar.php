@@ -16,7 +16,7 @@
         <ul class="metismenu left-sidenav-menu">
             <li class="menu-label mt-0">Menu</li>
             <li>
-                <a href="#clientes">
+                <a href="#dashboard">
                     <i data-feather="layers" class="align-self-center menu-icon"></i>
                     <span>Inicio</span>
                 </a>

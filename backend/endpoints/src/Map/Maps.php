@@ -24,29 +24,6 @@ class Maps extends EndPoint{
         //$this->usuariosTable = 'usuarios';
     }
 
-
-    public function GetLatLon(){
-
-
-        //Codigo para recuperar la latitud y longitud del gps arduino
-        $v = mt_rand( 0, 10 ) / 10;
-        $lat = -1.0655 + $v;
-        $v = mt_rand( 0, 10 ) / 10;
-        $lon =  -78.3996 + $v;
-
-        $this->getSQLDatabase()->dbCreate('coordenadas', [
-            'latitud' => $lat,
-            'longitud' => $lon,
-            'id_recorrido' => 1
-        ]);
-
-        $data = ['latitud' => $lat,
-                'longitud' => $lon
-            ];
-
-        $this->response->addValue('data', $data)->printResponse();
-    }
-
     //FUNCION QUE CONSUMIRA EL ARDUINO PARA GUARDAR LOS REGISTROS
     public function RegistrarLugar(){
         $this->request->checkInput([
@@ -136,7 +113,8 @@ class Maps extends EndPoint{
         }
     }
 
-    public function Estacionamiento(){
+    //Mas abajo esta ESTACIONAMIENTO que esta mejor que este codigo
+    public function Estacionamiento2(){
         $this->request->checkInput([
             'fecha_inicio' => DataTypes::string,
             'fecha_fin' => DataTypes::string,
@@ -161,7 +139,6 @@ class Maps extends EndPoint{
         if(count($data) < 2){
             $this->response->printError("No se han encontrado estacionamientos en las fechas indicadas");
         }
-        //$idcoordenada = $data[0]['id'];
         $estacionamientos = [];
         $itemestacionamiento = [];
         for ($i = 1; $i< count($data); $i++){
@@ -217,7 +194,7 @@ class Maps extends EndPoint{
             'fecha'
         ], "WHERE id_usuario = $usuario_id AND fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'" );
         if(count($data) < 2){
-            $this->response->printError("No se han encontrado suficientes localizaciones para tomar la velocidad");
+            $this->response->printError("No se han encontrado suficientes localizaciones para tomar la ciudades");
         }
         $coordenadas = $data;
 
@@ -235,6 +212,7 @@ class Maps extends EndPoint{
             $distancia = 6371 * acos(sin($lat1) * sin($lat2) + cos($lat1) * cos($lat2) * cos($lon2 - $lon1));
             $tiempo = strtotime($coordenadas[$i + 1]['fecha']) - strtotime($coordenadas[$i]['fecha']);
             $velocidad = $distancia / ($tiempo / 3600); // Convertir el tiempo a horas
+            $velocidad = number_format($velocidad, 2);
             $reg = [
                 'lat_inicio' => $coordenadas[$i]['latitud'],
                 'lon_inicio' => $coordenadas[$i]['longitud'],
@@ -250,14 +228,14 @@ class Maps extends EndPoint{
             $tiempoTotal += $tiempo;
             $velocidadMaxima = max($velocidadMaxima, $velocidad);
             $velocidadMinima = min($velocidadMinima, $velocidad);
-            // Calcular la velocidad promedio
+            // Calcular la ciudades promedio
             $velocidadPromedio = $distanciaTotal / ($tiempoTotal / 3600); // Convertir el tiempo a horas
         }
 
         $this->response->addValue('data', [
-            'velocidad_max' => $velocidadMaxima,
-            'velocidad_min' => $velocidadMinima,
-            'velocidad_med' => $velocidadPromedio,
+            'velocidad_max' => number_format($velocidadMaxima, 2),
+            'velocidad_min' => number_format($velocidadMinima, 2),
+            'velocidad_med' => number_format($velocidadPromedio, 2),
             'coordenadas' => $registros
         ])->printResponse();
 
@@ -293,20 +271,19 @@ class Maps extends EndPoint{
                 $ciudadActual = $ciudad;
                 $contador++;
                 $primerosUltimosRegistros[$contador]["ciudad"] = $ciudad;
-                $primerosUltimosRegistros[$contador]["primer_registro"] = $registro;
+                $primerosUltimosRegistros[$contador]["primer_registro"] = $registro['fecha'];
             }
 
-            $primerosUltimosRegistros[$contador]["ultimo_registro"] = $registro;
+            $primerosUltimosRegistros[$contador]["ultimo_registro"] = $registro['fecha'];
         }
         $this->response->addValue('data', $primerosUltimosRegistros)->printResponse();
     }
 
-    public function Estacionamiento2(){
+    public function Estacionamiento(){
         $this->request->checkInput([
             'fecha_inicio' => DataTypes::string,
             'fecha_fin' => DataTypes::string,
-            'minutos' => DataTypes::integer,
-            'horario_salida' => DataTypes::boolean
+            'minutos' => DataTypes::integer
         ], true);
         $horarios_salida = $this->request->getValue('horario_salida');
         $minutos = $this->request->getValue('minutos');

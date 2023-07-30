@@ -18,9 +18,8 @@ $response = serverQuery($token, array(
     'minutos' => $minutos,
     'fecha_inicio' => $fecha_inicio,
     'fecha_fin' => $fecha_fin
-
 ));
-$estacionamientos = $response['status'] ? $response['data'] : [];
+$horarios = $response['status'] ? $response['data'] : [];
 ?>
 <style>
     th {
@@ -43,23 +42,21 @@ $estacionamientos = $response['status'] ? $response['data'] : [];
         <thead>
         <tr>
         <tr>
-            <th>Latitud</th>
-            <th>Longitud</th>
-            <th>Inicio del estacionamiento</th>
-            <th>Fin del estacionamiento</th>
+            <th>Coordenadas</th>
+            <th>Fecha</th>
+            <th>Hora</th>
             <th>Ver en el mapa</th>
         </tr>
         </tr>
         </thead>
         <tbody id="table_body">
         <?php
-        foreach ($estacionamientos as $record) {
+        foreach ($horarios as $record) {
             ?>
             <tr>
-                <td><?= $record['latitud'] ?></td>
-                <td><?= $record['longitud'] ?></td>
-                <td><?= $record['primer_registro'] ?></td>
-                <td><?= $record['ultimo_registro'] ?></td>
+                <td><?= $record['latitud'] .", " .$record['longitud'] ?></td>
+                <td><?= date("Y-m-d", strtotime($record['ultimo_registro']));?></td>
+                <td><?= date("H:i:s", strtotime($record['ultimo_registro']));?></td>
                 <td>
                     <div class="text-center">
                         <div class="btn-group">

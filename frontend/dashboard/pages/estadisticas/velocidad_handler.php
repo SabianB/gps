@@ -10,17 +10,16 @@ global $token;
 
 $fecha_inicio = $_POST["fecha_inicio"];
 $fecha_fin = $_POST["fecha_fin"];
-$minutos = (int)$_POST["minutos"];
 
 $response = serverQuery($token, array(
     'endpoint' => 'Maps',
-    'action' => 'Estacionamiento',
-    'minutos' => $minutos,
+    'action' => 'Velocidad',
     'fecha_inicio' => $fecha_inicio,
     'fecha_fin' => $fecha_fin
 
 ));
-$estacionamientos = $response['status'] ? $response['data'] : [];
+$result = $response['status'] ? $response['data'] : [];
+$velocidad = $result['coordenadas'];
 ?>
 <style>
     th {
@@ -36,30 +35,34 @@ $estacionamientos = $response['status'] ? $response['data'] : [];
         border: 1px solid #ccc;
     }
 </style>
-
+<div class="card-mb3">
+    <div class="card-body">
+        Velocidad promedio: <?= $result['velocidad_med'] ?> Km/h<br>
+        Velocidad máxima: <?= $result['velocidad_max'] ?> Km/h<br>
+        Velocidad mínima: <?= $result['velocidad_min'] ?> Km/h<br>
+    </div>
+</div>
 <div class="table-responsive" id="table_container">
     <table class="table table-bordered table-striped table-vcenter js-dataTable-buttons block-content block-content-full"
            id="table_items">
         <thead>
         <tr>
         <tr>
-            <th>Latitud</th>
-            <th>Longitud</th>
-            <th>Inicio del estacionamiento</th>
-            <th>Fin del estacionamiento</th>
+            <th>Coordenadas</th>
+            <th>Fechas</th>
+            <th>Velocidad</th>
             <th>Ver en el mapa</th>
         </tr>
         </tr>
         </thead>
         <tbody id="table_body">
         <?php
-        foreach ($estacionamientos as $record) {
+        foreach ($velocidad as $record) {
             ?>
             <tr>
-                <td><?= $record['latitud'] ?></td>
-                <td><?= $record['longitud'] ?></td>
-                <td><?= $record['primer_registro'] ?></td>
-                <td><?= $record['ultimo_registro'] ?></td>
+                <td><?= $record['lat_inicio'] . ", " . $record['lon_inicio'] . " a " .  $record['lat_fin'] . ", " . $record['lon_fin']?></td>
+                <td><?= $record['fecha_inicio'] . " - " . $record['fecha_fin'] ?></td>
+                <td><?= $record['velocidad'] ?> Km/h</td>
                 <td>
                     <div class="text-center">
                         <div class="btn-group">

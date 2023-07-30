@@ -117,7 +117,10 @@ $response = serverQueryNoToken(array(
 
 <!-- Pages js -->
 <script src="js/pages/mapa.js"></script>
-<script src="js/pages/estacionamiento/estacionamiento.js"></script>
+<script src="js/pages/estadisticas/estacionamiento.js"></script>
+<script src="js/pages/estadisticas/horarios.js"></script>
+<script src="js/pages/estadisticas/velocidad.js"></script>
+<script src="js/pages/ciudades/ciudades.js"></script>
 
 <!--OpenStreetMaps - Leaflet-->
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -176,17 +179,9 @@ $response = serverQueryNoToken(array(
             case "#velocidad_promedio":
                 loadPage('pages/estadisticas/velocidad.php');
                 break;
-            case "#clientes":
-                loadPage('pages/clientes/index.php');
+            case "#ciudades":
+                loadPage('pages/ciudades/ciudades.php');
                 break;
-            // case "#estacionamiento":
-            //     if(hashValue){
-            //         showLoading('Cargando datos...');
-            //         loadPage(`pages/estadisticas/estacionamiento_handler.php?id=${hashValue}`);
-            //     }else{
-            //         window.location.hash = 'estacionamiento';
-            //     }
-            //     break;
             default:
                 window.location.hash = "dashboard";
                 break;

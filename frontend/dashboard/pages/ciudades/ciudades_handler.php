@@ -10,17 +10,15 @@ global $token;
 
 $fecha_inicio = $_POST["fecha_inicio"];
 $fecha_fin = $_POST["fecha_fin"];
-$minutos = (int)$_POST["minutos"];
 
 $response = serverQuery($token, array(
     'endpoint' => 'Maps',
-    'action' => 'Estacionamiento',
-    'minutos' => $minutos,
+    'action' => 'Ciudades',
     'fecha_inicio' => $fecha_inicio,
     'fecha_fin' => $fecha_fin
 
 ));
-$estacionamientos = $response['status'] ? $response['data'] : [];
+$result = $response['status'] ? $response['data'] : [];
 ?>
 <style>
     th {
@@ -36,40 +34,26 @@ $estacionamientos = $response['status'] ? $response['data'] : [];
         border: 1px solid #ccc;
     }
 </style>
-
 <div class="table-responsive" id="table_container">
     <table class="table table-bordered table-striped table-vcenter js-dataTable-buttons block-content block-content-full"
            id="table_items">
         <thead>
         <tr>
         <tr>
-            <th>Latitud</th>
-            <th>Longitud</th>
-            <th>Inicio del estacionamiento</th>
-            <th>Fin del estacionamiento</th>
-            <th>Ver en el mapa</th>
+            <th>Ciudad</th>
+            <th>Fecha de entrada</th>
+            <th>Fecha de salida</th>
         </tr>
         </tr>
         </thead>
         <tbody id="table_body">
         <?php
-        foreach ($estacionamientos as $record) {
+        foreach ($result as $record) {
             ?>
             <tr>
-                <td><?= $record['latitud'] ?></td>
-                <td><?= $record['longitud'] ?></td>
+                <td><?= $record['ciudad']?></td>
                 <td><?= $record['primer_registro'] ?></td>
                 <td><?= $record['ultimo_registro'] ?></td>
-                <td>
-                    <div class="text-center">
-                        <div class="btn-group">
-                            <button data-toggle="tooltip" title="Ver en el mapa" type="button" class="btn-dark btn"
-                                    onclick="">
-                                <i class="fas fa-map"></i>
-                            </button>
-                        </div>
-                    </div>
-                </td>
             </tr>
             <?php
         }
