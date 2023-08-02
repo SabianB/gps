@@ -17,25 +17,25 @@
             <li class="menu-label mt-0">Menu</li>
             <li>
                 <a href="#dashboard">
-                    <i data-feather="layers" class="align-self-center menu-icon"></i>
+                    <i class="align-self-center fas fa-home"></i>
                     <span>Inicio</span>
                 </a>
             </li>
             <li>
                 <a href="#historial">
-                    <i data-feather="layers" class="align-self-center menu-icon"></i>
+                    <i class="align-self-center mdi mdi-history"></i>
                     <span>Historial</span>
                 </a>
             </li>
             <li>
                 <a href="#tracking">
-                    <i data-feather="layers" class="align-self-center menu-icon"></i>
+                    <i class="align-self-center fas fa-map-marker-alt"></i>
                     <span>Tracking</span>
                 </a>
             </li>
             <li>
                 <a href="javascript: void(0);">
-                    <i data-feather="layers" class="align-self-center menu-icon"></i>
+                    <i class="align-self-center far fa-chart-bar"></i>
                     <span>Estadisticas</span><span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span>
                 </a>
                 <ul class="nav-second-level" aria-expanded="false">
@@ -46,7 +46,7 @@
             </li>
             <li>
                 <a href="#ciudades">
-                    <i data-feather="layers" class="align-self-center menu-icon"></i>
+                    <i class="align-self-center fas fa-street-view"></i>
                     <span>Ciudades</span>
                 </a>
             </li>
