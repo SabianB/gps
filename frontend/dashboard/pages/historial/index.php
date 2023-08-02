@@ -47,7 +47,7 @@ $response = serverQuery($token, array(
             <div class="row mt-3">
                 <div class="col text-center">
                     <label for="fechaFin" class="form-label">Fecha de fin</label>
-                    <input type="datetime-local" class="form-control" id="fechaFin">
+                    <input type="datetime-local" class="form-control" id="fechaFin" value="<?php echo gmdate('Y-m-d\TH:i', time() - 5 * 3600); ?>">
                 </div>
             </div>
             <div class="row mt-3">
@@ -69,18 +69,21 @@ $response = serverQuery($token, array(
     var fechaInputFin = document.getElementById("fechaFin");
     var fechaini;
     var fechafin;
-
+    var fecha2 = new Date(fechaInputFin.value);
+    fecha2.setHours(fecha2.getHours() - 5);
+    var formattedDate2 = fecha2.toISOString().substring(0, 19).replace("T", " ");
+    fechafin = formattedDate2;
     fechaInput.addEventListener("input", function() {
-        const fecha = new Date(this.value);
+        var fecha = new Date(this.value);
         fecha.setHours(fecha.getHours() - 5);
-        const formattedDate = fecha.toISOString().substring(0, 19).replace("T", " ");
+        var formattedDate = fecha.toISOString().substring(0, 19).replace("T", " ");
         this.value = formattedDate;
         fechaini = formattedDate;
     });
     fechaInputFin.addEventListener("input", function() {
-        const fecha2 = new Date(this.value);
+        fecha2 = new Date(this.value);
         fecha2.setHours(fecha2.getHours() - 5);
-        const formattedDate2 = fecha2.toISOString().substring(0, 19).replace("T", " ");
+        formattedDate2 = fecha2.toISOString().substring(0, 19).replace("T", " ");
         this.value = formattedDate2;
         fechafin = formattedDate2;
     });

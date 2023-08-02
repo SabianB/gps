@@ -22,6 +22,47 @@ class Mapa {
             L.control.scale({imperial: true, metric: true}).addTo(this.map);
     }
 
+    async OpenModalMap(boton){
+        if(this.marker){
+            this.map.removeLayer(this.marker);
+        }
+
+        this.route = L.featureGroup().addTo(this.map);
+        var data = boton.getAttribute('data-info');
+        data = data.replace(/\\'/g, '\\"');
+        data = data.replace(/'/g, '"');
+        data = JSON.parse(data);
+        if(data.tipo === "estacionamiento"){
+            showOrHideModal('estacionamientoModal')
+            await this.delay(200);
+            this.map.invalidateSize();
+            this.marker = L.marker({lat: data.lat, lon: data.lon}).bindTooltip("Inicio de estacionamiento: " + data.inicio_est + "<br>Fin de estacionamiento: " + data.fin_est);
+            this.route.addLayer(this.marker);
+            this.map.fitBounds(this.route.getBounds());
+        }
+        else if(data.tipo === "horarios"){
+            showOrHideModal('horariosModal')
+            await this.delay(200);
+            this.map.invalidateSize();
+            this.marker = L.marker({lat: data.lat, lon: data.lon}).bindTooltip("Fecha y hora de salida: " + data.fecha);
+            this.route.addLayer(this.marker);
+            this.map.fitBounds(this.route.getBounds());
+        }
+        else if(data.tipo === "velocidad"){
+            showOrHideModal('velocidadModal')
+            await this.delay(200);
+            this.map.invalidateSize();
+            this.marker = L.marker({lat: data.lat, lon: data.lon}).bindTooltip("Fecha: " + data.fecha + "<br>Velocidad: " + data.velocidad);
+            this.route.addLayer(this.marker);
+            this.map.fitBounds(this.route.getBounds());
+        }
+
+    }
+
+    delay(time) {
+        return new Promise(resolve => setTimeout(resolve, time));
+    }
+
     async HistorialRecorrido(inicio, fin){
         if (inicio === undefined) {
             showMessage('No se ha colocado una fecha de inicio para poder realizar la busqueda.', 'error');

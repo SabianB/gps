@@ -64,7 +64,9 @@ $estacionamientos = $response['status'] ? $response['data'] : [];
                     <div class="text-center">
                         <div class="btn-group">
                             <button data-toggle="tooltip" title="Ver en el mapa" type="button" class="btn-dark btn"
-                                    onclick="">
+                                    data-info="{'tipo': 'estacionamiento','lat': '<?= $record['latitud']?>','lon':'<?= $record['longitud'] ?>',
+                                     'inicio_est':'<?= $record['primer_registro']?>', 'fin_est':'<?= $record['ultimo_registro']?>'}"
+                                    onclick="objMapa.OpenModalMap(this)">
                                 <i class="fas fa-map"></i>
                             </button>
                         </div>
@@ -85,5 +87,8 @@ $estacionamientos = $response['status'] ? $response['data'] : [];
     $(document).ready(function () {
         initDataTable('table_items');
     });
+
+
+
 
 </script>

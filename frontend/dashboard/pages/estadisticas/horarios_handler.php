@@ -61,7 +61,9 @@ $horarios = $response['status'] ? $response['data'] : [];
                     <div class="text-center">
                         <div class="btn-group">
                             <button data-toggle="tooltip" title="Ver en el mapa" type="button" class="btn-dark btn"
-                                    onclick="">
+                                    data-info="{'tipo': 'horarios','lat': '<?= $record['latitud']?>','lon':'<?= $record['longitud'] ?>',
+                                     'fecha':'<?= $record['ultimo_registro']?>'}"
+                                    onclick="objMapa.OpenModalMap(this)">
                                 <i class="fas fa-map"></i>
                             </button>
                         </div>

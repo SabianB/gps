@@ -67,7 +67,9 @@ $velocidad = $result['coordenadas'];
                     <div class="text-center">
                         <div class="btn-group">
                             <button data-toggle="tooltip" title="Ver en el mapa" type="button" class="btn-dark btn"
-                                    onclick="">
+                                    data-info="{'tipo': 'velocidad','lat': '<?= $record['lat_fin']?>','lon':'<?= $record['lon_fin'] ?>',
+                                     'fecha':'<?= $record['fecha_fin']?>', 'velocidad': '<?= $record['velocidad']?>Km/h'}"
+                                    onclick="objMapa.OpenModalMap(this)">
                                 <i class="fas fa-map"></i>
                             </button>
                         </div>

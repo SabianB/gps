@@ -45,7 +45,7 @@ $response = serverQuery($token, array(
             <div class="row mt-3">
                 <div class="col text-center">
                     <label for="fechaFin" class="form-label">Fecha de fin</label>
-                    <input type="datetime-local" class="form-control" id="fechaFin">
+                    <input type="datetime-local" class="form-control" id="fechaFin" value="<?php echo gmdate('Y-m-d\TH:i', time() - 5 * 3600); ?>">
                 </div>
             </div>
             <div class="row mt-3">
@@ -88,10 +88,25 @@ $response = serverQuery($token, array(
 
 
 </div>
-
+<div class="modal fade" id="velocidadModal" tabindex="-1" aria-labelledby="exampleModalFullscreenLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalFullscreenLabel">Full screen modal</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="map"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-soft-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     initDataTable('velocidadTable');
-    //objMapa.IniciarMapa();
+    objMapa.IniciarMapa();
 
 
 
@@ -99,18 +114,21 @@ $response = serverQuery($token, array(
     var fechaInputFin = document.getElementById("fechaFin");
     var fechaini;
     var fechafin;
-
+    var fecha2 = new Date(fechaInputFin.value);
+    fecha2.setHours(fecha2.getHours() - 5);
+    var formattedDate2 = fecha2.toISOString().substring(0, 19).replace("T", " ");
+    fechafin = formattedDate2;
     fechaInput.addEventListener("input", function() {
-        const fecha = new Date(this.value);
+        var fecha = new Date(this.value);
         fecha.setHours(fecha.getHours() - 5);
-        const formattedDate = fecha.toISOString().substring(0, 19).replace("T", " ");
+        var formattedDate = fecha.toISOString().substring(0, 19).replace("T", " ");
         this.value = formattedDate;
         fechaini = formattedDate;
     });
     fechaInputFin.addEventListener("input", function() {
-        const fecha2 = new Date(this.value);
+        fecha2 = new Date(this.value);
         fecha2.setHours(fecha2.getHours() - 5);
-        const formattedDate2 = fecha2.toISOString().substring(0, 19).replace("T", " ");
+        formattedDate2 = fecha2.toISOString().substring(0, 19).replace("T", " ");
         this.value = formattedDate2;
         fechafin = formattedDate2;
     });
