@@ -85,10 +85,15 @@ $estacionamientos = $response['status'] ? $response['data'] : [];
 <script>
     initBootstrapTooltip();
     $(document).ready(function () {
-        initDataTable('table_items');
+        // initDataTable('table_items');
+        objMapa.tabla = $('#table_items').DataTable({
+            "language": {
+                "url": config['jsonPath'] + "Spanish.json"
+            },
+            "columnDefs": [{
+                "targets": 'no-sort',
+                "orderable": false,
+            }]
+        });
     });
-
-
-
-
 </script>

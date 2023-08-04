@@ -52,6 +52,11 @@ $response = serverQuery($token, array(
                     <button class="btn btn-success" onclick="objCiudad.search(fechaini, fechafin, false, true)">Buscar</button>
                 </div>
             </div>
+            <div class="row mt-3">
+                <div class="col text-center">
+                    <button class="btn btn-success" onclick="objMapa.ReportePorTabla('Ciudades', false)">Generar reporte</button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-lg-10">
@@ -88,9 +93,6 @@ $response = serverQuery($token, array(
 
 <script>
     initDataTable('ciudadesTable');
-    //objMapa.IniciarMapa();
-
-
 
     var fechaInput = document.getElementById("fechaInicio");
     var fechaInputFin = document.getElementById("fechaFin");

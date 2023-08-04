@@ -106,10 +106,11 @@ $response = serverQueryNoToken(array(
 
 <!-- App js -->
 <script src="../assets/js/app.js"></script>
-
 <script src="../js/config.js"></script>
 <script src="../js/empiric_frontend_framework.js"></script>
 <script src="../plugins/file-input/fileinput.min.js"></script>
+<script src="../plugins/xlsx/xlsx_0.17.4_xlsx.full.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
 <!-- Required datatable js -->
 <script src="../plugins/datatables/jquery.dataTables.min.js"></script>
@@ -122,8 +123,10 @@ $response = serverQueryNoToken(array(
 <script src="js/pages/estadisticas/velocidad.js"></script>
 <script src="js/pages/ciudades/ciudades.js"></script>
 
-<!--OpenStreetMaps - Leaflet-->
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<!--SheetJS-->
+
+
 
 <script>
     window.addEventListener('popstate', function (event) {

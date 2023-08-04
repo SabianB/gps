@@ -1,3 +1,4 @@
+
 class Mapa {
 
     constructor() {
@@ -7,6 +8,8 @@ class Mapa {
         this.route = undefined;
         this.intervalo = undefined;
         this.marcador = undefined;
+        this.actualresponse = undefined;
+        this.tabla = undefined;
     }
 
     IniciarMapa(){
@@ -87,6 +90,7 @@ class Mapa {
         jsonRQ.add('fecha_fin', fin, 'string');
         showLoading('Obteniendo datos...');
         jsonRQ.makeServerQuery(  (response)=> {
+            this.actualresponse = response;
             swal.close();
             for (let i = 0; i < response.length; i++) {
                 const item = response[i];
@@ -122,223 +126,46 @@ class Mapa {
         clearInterval(this.intervalo);
     }
 
-    async Estacionamientos(inicio,fin, tiempo){
-
+    HistorialXlsx(){
+        var wb = XLSX.utils.book_new();
+        var ws = XLSX.utils.json_to_sheet(this.actualresponse, { header: ["latitud", "longitud", "fecha"] });
+        XLSX.utils.book_append_sheet(wb, ws, 'Historial');
+        XLSX.writeFile(wb, 'Reporte.xlsx');
     }
 
-    async Ciudades(){
+    ReportePorTabla(nombre = 'Reporte', ultimo_campo = true){
+        if(this.tabla === undefined){
+            showMessage('No existen datos en la tabla actual para poder generar un reporte.', 'error');
+            return;
+        }
+        var datosTabla = undefined;
+        var encabezados = undefined;
 
-    }
+        if(ultimo_campo){
+            datosTabla = this.tabla.rows().data().toArray().map(row => row.slice(0, -1));
+            encabezados = this.tabla.columns().header().toArray().slice(0, -1).map(th => th.innerText);
+        }
+        else {
+            datosTabla = this.tabla.rows().data().toArray();
+            encabezados = this.tabla.columns().header().toArray().map(th => th.innerText);
 
-    async upload() {
-        let nombre = document.getElementById('nombre');
-        if (nombre.value.trim() === "") {
-            showMessage('Debe escribir un nombre para el hotel.', 'error');
-            return;
         }
-        let descripcion = document.getElementById('descripcion');
-        if (descripcion.value.trim() === "") {
-            showMessage('Debe escribir una descripción para el hotel.', 'error');
-            return;
-        }
-        let img = document.getElementById('img');
-        if (img.value.trim() === "") {
-            showMessage('Debe cargar un url de una imagen del hotel.', 'error');
-            return;
-        }
-        let img1 = document.getElementById('img1');
-        if (img1.value.trim() === "") {
-            showMessage('Debe cargar un url de una imagen del hotel.', 'error');
-            return;
-        }
-        let img2 = document.getElementById('img2');
-        if (img2.value.trim() === "") {
-            showMessage('Debe cargar un url de una imagen del hotel.', 'error');
-            return;
-        }
-        let img3 = document.getElementById('img3');
-        if (img3.value.trim() === "") {
-            showMessage('Debe cargar un url de una imagen del hotel.', 'error');
-            return;
-        }
-        let puntaje = document.getElementById('puntaje');
-        if (puntaje.value.trim() === "" || puntaje.value > 5) {
-            showMessage('Debe elegir un puntaje entre 1 y 5 para el hotel', 'error');
-            return;
-        }
-        let x = document.getElementById('x');
-        if (x.value.trim() === "") {
-            showMessage('Debe escribir las coordenadas (x) del hotel', 'error');
-            return;
-        }
-        let y = document.getElementById('y');
-        if (y.value.trim() === "") {
-            showMessage('Debe escribir las coordenadas (y) del hotel', 'error');
-            return;
-        }
-        showLoading('Registrando...');
-        const data = new FormData();
-        data.append('request', JSON.stringify({
-            endpoint: 'Hoteles',
-            action: 'registrarHotel',
-            nombre: nombre.value.trim(),
-            img: img.value.trim(),
-            img1: img1.value.trim(),
-            img2: img2.value.trim(),
-            img3: img3.value.trim(),
-            descripcion: descripcion.value.trim(),
-            puntaje: parseInt(puntaje.value.trim()),
-            x: x.value.trim(),
-            y: y.value.trim()
-        }));
-        try {
-            const fetcher = await fetch(config['serverApi'], {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json;utf-8'
-                },
-                body: data
-            });
-            const json = await fetcher.json();
-            if (json.status) {
-                Swal.close();
-                showMessageWithAction(json.message, 'success', undefined, undefined, () => {
-                    showOrHideModal('modalAdd');
-                    location.reload();
-                });
-            } else {
-                swal.close();
-                showMessage(json.message, 'error');
-            }
-        } catch (err) {
-            swal.close();
-            showMessage(err.message, 'error');
-        }
-    }
 
-    async updateFile() {
-        let id = getAttribute('btn_update', 'data-id');
-        let nombre = document.getElementById('nombreU');
-        if (nombre.value.trim() === "") {
-            showMessage('Debe escribir un nombre para el hotel.', 'error');
-            return;
-        }
-        let descripcion = document.getElementById('descripcionU');
-        if (descripcion.value.trim() === "") {
-            showMessage('Debe escribir una descripción para el hotel.', 'error');
-            return;
-        }
-        let img = document.getElementById('imgU');
-        if (img.value.trim() === "") {
-            showMessage('Debe cargar un url de una imagen del hotel.', 'error');
-            return;
-        }
-        let img1 = document.getElementById('img1U');
-        if (img1.value.trim() === "") {
-            showMessage('Debe cargar un url de una imagen del hotel.', 'error');
-            return;
-        }
-        let img2 = document.getElementById('img2U');
-        if (img2.value.trim() === "") {
-            showMessage('Debe cargar un url de una imagen del hotel.', 'error');
-            return;
-        }
-        let img3 = document.getElementById('img3U');
-        if (img3.value.trim() === "") {
-            showMessage('Debe cargar un url de una imagen del hotel.', 'error');
-            return;
-        }
-        let puntaje = document.getElementById('puntajeU');
-        if (puntaje.value.trim() === "" || puntaje.value > 5) {
-            showMessage('Debe elegir un puntaje entre 1 y 5 para el hotel', 'error');
-            return;
-        }
-        let x = document.getElementById('xU');
-        if (x.value.trim() === "") {
-            showMessage('Debe escribir las coordenadas (x) del hotel', 'error');
-            return;
-        }
-        let y = document.getElementById('yU');
-        if (y.value.trim() === "") {
-            showMessage('Debe escribir las coordenadas (y) del hotel', 'error');
-            return;
-        }
-        showLoading('Actualizando...');
-        const data = new FormData();
-        data.append('request', JSON.stringify({
-            endpoint: 'Hoteles',
-            action: 'actualizarHotel',
-            id: parseInt(id),
-            nombre: nombre.value.trim(),
-            img: img.value.trim(),
-            img1: img1.value.trim(),
-            img2: img2.value.trim(),
-            img3: img3.value.trim(),
-            descripcion: descripcion.value.trim(),
-            puntaje: parseInt(puntaje.value.trim()),
-            x: x.value.trim(),
-            y: y.value.trim()
-        }));
-            try {
-            const fetcher = await fetch(config['serverApi'], {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json;utf-8'
-                },
-                body: data
-            });
-            const json = await fetcher.json();
-            if (json.status) {
-                Swal.close();
-                showMessageWithAction(json.message, 'success', undefined, undefined, () => {
-                    showOrHideModal('modalUpdate');
-                    location.reload();
-                });
-            } else {
-                swal.close();
-                showMessage(json.message, 'error');
-            }
-        } catch (err) {
-            swal.close();
-            showMessage(err.message, 'error');
-        }
-    }
+        var wb = XLSX.utils.book_new();
+        var ws = XLSX.utils.aoa_to_sheet([encabezados, ...datosTabla]);
 
-
-    async deleteFile(fileId) {
-        let thisClass = this;
-        if (await customConfirmModal('¿Está seguro que desea eliminar este hotel?', undefined, 'question')) {
-            let jsonRQ = new jsonRequest(thisClass.endpoint, 'eliminarHotel');
-            jsonRQ.add('id', fileId);
-            await jsonRQ.makeServerQuery(function (response) {
-                const message = getResponse(response, 'message');
-                showMessageWithAction(message, 'success', undefined, undefined, () => {
-                    location.reload();
-                });
-            });
+        var arrayAnchos = [];
+        for (var i = 0; i < encabezados.length; i++) {
+            arrayAnchos.push({ wpx: 150 });
         }
-    }
 
+        ws['!cols'] = arrayAnchos;
 
-    loadData(id) {
-        let thisClass = this;
-        let jsonRQ = new jsonRequest(thisClass.endpoint, 'obtenerHotelPorID');
-        jsonRQ.add('id', id, 'int');
-        showLoading('Obteniendo datos...');
-        jsonRQ.makeServerQuery(function (response) {
-            swal.close();
-            set('nombreU', response.nombre);
-            set('descripcionU', response.descripcion);
-            set('puntajeU',response.puntaje);
-            set('xU',response.x);
-            set('yU',response.y);
-            set('imgU',response.img);
-            set('img1U',response.img1);
-            set('img2U',response.img2);
-            set('img3U',response.img3);
-            setAttribute('btn_update', 'data-id', response.id, 'modalUpdate');
-            showOrHideModal('modalUpdate');
-        }, undefined, true);
+        // Agregar la hoja de cálculo al libro
+        XLSX.utils.book_append_sheet(wb, ws, nombre);
+
+        XLSX.writeFile(wb, `${nombre}.xlsx`);
+
     }
 }
 

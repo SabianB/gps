@@ -53,6 +53,11 @@ $response = serverQuery($token, array(
                     <button class="btn btn-success" onclick="objHorarios.search(fechaini, fechafin, 4, false, true)">Buscar</button>
                 </div>
             </div>
+            <div class="row mt-3">
+                <div class="col text-center">
+                    <button class="btn btn-success" onclick="objMapa.ReportePorTabla('Horarios_Salida')">Generar reporte</button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-lg-10">

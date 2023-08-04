@@ -71,6 +71,11 @@ $response = serverQuery($token, array(
                     <button class="btn btn-success" onclick="objEst.search(fechaini, fechafin, getElementById('tiempo').value, false, true)">Buscar</button>
                 </div>
             </div>
+            <div class="row mt-3">
+                <div class="col text-center">
+                    <button class="btn btn-success" onclick="objMapa.ReportePorTabla('Estacionamientos')">Generar reporte</button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-lg-10">
