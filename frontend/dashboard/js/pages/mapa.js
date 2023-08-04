@@ -151,15 +151,37 @@ class Mapa {
 
         }
 
-        var wb = XLSX.utils.book_new();
-        var ws = XLSX.utils.aoa_to_sheet([encabezados, ...datosTabla]);
+        console.log(datosTabla);
 
         var arrayAnchos = [];
         for (var i = 0; i < encabezados.length; i++) {
             arrayAnchos.push({ wpx: 150 });
         }
+        if(nombre === 'Velocidad_promedio'){
+            arrayAnchos[0]['wpx'] = 410;
+            arrayAnchos[1]['wpx'] = 250;
+        }
+
+        var wb = XLSX.utils.book_new();
+        var ws = XLSX.utils.aoa_to_sheet([encabezados, ...datosTabla]);
+
 
         ws['!cols'] = arrayAnchos;
+
+
+        // Crear un estilo en negrita
+        var boldStyle = {
+            font: { bold: true }, alignment: { wrapText: true }
+        };
+
+        // Aplicar el estilo en negrita a las celdas de encabezado (primera fila)
+        ws['A1'].s = boldStyle;
+        ws['B1'].s = boldStyle;
+        ws['C1'].s = boldStyle;
+        if(encabezados.length === 4){
+            ws['D1'].s = boldStyle;
+        }
+
 
         // Agregar la hoja de cálculo al libro
         XLSX.utils.book_append_sheet(wb, ws, nombre);

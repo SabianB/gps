@@ -110,6 +110,7 @@ $response = serverQueryNoToken(array(
 <script src="../js/empiric_frontend_framework.js"></script>
 <script src="../plugins/file-input/fileinput.min.js"></script>
 <script src="../plugins/xlsx/xlsx_0.17.4_xlsx.full.min.js"></script>
+<script src="../plugins/xlsx/xlsx.bundle.js"></script>
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
 <!-- Required datatable js -->
