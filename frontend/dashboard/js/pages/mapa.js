@@ -10,6 +10,9 @@ class Mapa {
         this.marcador = undefined;
         this.actualresponse = undefined;
         this.tabla = undefined;
+        this.velmax = 0;
+        this.velmin = 0;
+        this.velmed = 0;
     }
 
     IniciarMapa(){
@@ -151,43 +154,47 @@ class Mapa {
 
         }
 
-        console.log(datosTabla);
-
         var arrayAnchos = [];
         for (var i = 0; i < encabezados.length; i++) {
             arrayAnchos.push({ wpx: 150 });
         }
-        if(nombre === 'Velocidad_promedio'){
-            arrayAnchos[0]['wpx'] = 410;
-            arrayAnchos[1]['wpx'] = 250;
-        }
-
-        var wb = XLSX.utils.book_new();
-        var ws = XLSX.utils.aoa_to_sheet([encabezados, ...datosTabla]);
-
-
-        ws['!cols'] = arrayAnchos;
-
-
         // Crear un estilo en negrita
         var boldStyle = {
             font: { bold: true }, alignment: { wrapText: true }
         };
+        if(nombre === 'Velocidad_promedio'){
+            arrayAnchos[0]['wpx'] = 410;
+            arrayAnchos[1]['wpx'] = 250;
+            var arrayVelocidades = [[`Velocidad promedio: ${this.velmed}Km/h`],
+                [`Velocidad mínima: ${this.velmin}Km/h`], [`Velocidad máxima: ${this.velmax}Km/h`],
+            ["Coordenadas", "fechas", "Velocidad"]];
+            //encabezados.unshift(arrayVelocidades);
+            Array.prototype.unshift.apply(datosTabla, arrayVelocidades);
 
-        // Aplicar el estilo en negrita a las celdas de encabezado (primera fila)
-        ws['A1'].s = boldStyle;
-        ws['B1'].s = boldStyle;
-        ws['C1'].s = boldStyle;
-        if(encabezados.length === 4){
-            ws['D1'].s = boldStyle;
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.aoa_to_sheet(datosTabla);
+            ws['!cols'] = arrayAnchos;
+
+            ws['A4'].s = boldStyle;
+            ws['B4'].s = boldStyle;
+            ws['C4'].s = boldStyle;
         }
+        else {
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.aoa_to_sheet([encabezados, ...datosTabla]);
+            ws['!cols'] = arrayAnchos;
 
+           ws['A1'].s = boldStyle;
+           ws['B1'].s = boldStyle;
+           ws['C1'].s = boldStyle;
+           if(encabezados.length === 4){
+               ws['D1'].s = boldStyle;
+           }
+       }
 
         // Agregar la hoja de cálculo al libro
         XLSX.utils.book_append_sheet(wb, ws, nombre);
-
         XLSX.writeFile(wb, `${nombre}.xlsx`);
-
     }
 }
 

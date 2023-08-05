@@ -98,6 +98,10 @@ $velocidad = $result['coordenadas'];
                 "orderable": false,
             }]
         });
+        objMapa.velmin = <?= $result['velocidad_min']?>;
+        objMapa.velmax = <?= $result['velocidad_max']?>;
+        objMapa.velmed = <?= $result['velocidad_med']?>;
     });
+
 
 </script>
