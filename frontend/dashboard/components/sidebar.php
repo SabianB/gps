@@ -51,7 +51,7 @@
                 </a>
             </li>
             <li>
-                <a href="#logout">
+                <a href="components/logout.php">
                     <i data-feather="layers" class="align-self-center menu-icon"></i>
                     <span>Cerrar sesión</span>
                 </a>
