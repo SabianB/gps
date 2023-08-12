@@ -3,6 +3,7 @@
 use database\Connection;
 use api\Request;
 use api\Response;
+use endpoints\src\Maps;
 
 require_once 'loader.php';
 global $response;
@@ -16,6 +17,13 @@ function failRequest($code)
 global $configs;
 $petition = $_SERVER['REQUEST_METHOD'];
 if ($petition != 'POST') {
+    if (isset($_GET['lat']) && isset($_GET['long'])) {
+        (new Maps(new Request([
+            'id_user' => 1,
+            'latitud' => $_GET['lat'],
+            'longitud' => $_GET['long'],
+        ]), $response))->RegistrarLugar();
+    }
     $response->addValue('data', $configs['app'])->printResponse();
 }
 $request = @json_decode(file_get_contents('php://input'), true);
