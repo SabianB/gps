@@ -19,7 +19,7 @@ $petition = $_SERVER['REQUEST_METHOD'];
 if ($petition != 'POST') {
     if (isset($_GET['lat']) && isset($_GET['long'])) {
         (new Maps(new Request([
-            'id_user' => 1,
+            'id_usuario' => 1,
             'latitud' => $_GET['lat'],
             'longitud' => $_GET['long'],
         ]), $response))->RegistrarLugar();
