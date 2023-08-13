@@ -231,8 +231,8 @@ class Maps extends EndPoint{
         $fecha_inicio = $this->request->getValue('fecha_inicio');
         $fecha_fin = $this->request->getValue('fecha_fin');
         $data = $this->getSQLDatabase()->dbRead('registros', [
-            'ROUND(latitud, 3) AS latitud',
-            'ROUND(longitud, 3) AS longitud',
+            'FORMAT(latitud, 3) AS latitud',
+            'FORMAT(longitud, 3) AS longitud',
             'fecha'
         ], "WHERE id_usuario = $usuario_id AND fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'" );
         if(count($data) < 2){

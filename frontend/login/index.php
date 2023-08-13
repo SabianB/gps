@@ -99,14 +99,14 @@
                                         <div class="form-group mb-2">
                                             <label class="form-label" for="clave">Contraseña</label>
                                             <div class="input-group">
-                                                <input type="password" class="form-control required" name="clave" id="clave" placeholder="Ingrese una contraseña">
+                                                <input type="password" class="form-control required avoid-numeric" name="clave" id="clave" placeholder="Ingrese una contraseña">
                                             </div>
                                         </div><!--end form-group-->
 
                                         <div class="form-group mb-2">
                                             <label class="form-label" for="clave2">Verificar Contraseña</label>
                                             <div class="input-group">
-                                                <input type="password" class="form-control required" name="clave2" id="clave2" placeholder="Repita la contraseña">
+                                                <input type="password" class="form-control required avoid-numeric" name="clave2" id="clave2" placeholder="Repita la contraseña">
                                             </div>
                                         </div><!--end form-group-->
 
