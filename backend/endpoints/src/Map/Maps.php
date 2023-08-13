@@ -76,8 +76,8 @@ class Maps extends EndPoint{
         $payload = $this->request->getPayload();
         $usuario_id = $payload['id'];
 
-        //REMPLAZAR 'latitud' y 'longitud' por:  'ROUND(latitud, 3) AS latitud', 'ROUND(longitud, 3) AS longitud',
-        //Asi se reciben 3 decimales y la precision se redondea
+        //REMPLAZAR 'latitud' y 'longitud' por:  'FORMAT(latitud, 3) AS latitud', 'FORMAT(longitud, 3) AS longitud',
+        //Asi se reciben 3 decimales.
         $data = $this->getSQLDatabase()->dbRead('registros', [
             'id',
             'latitud',
