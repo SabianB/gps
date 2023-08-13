@@ -41,7 +41,7 @@ $response = serverQuery($token, array(
                 <div class="row">
                     <div>
                         <div class="text-center">
-                            <button class="btn btn-success btn-lg" onclick="objMapa.IniciarTracking()">Iniciar</button>
+                            <button class="btn btn-success btn-lg" id="btniniciar" onclick="objMapa.IniciarTracking()">Iniciar</button>
                         </div>
 
                         <div class="text-center mt-4">

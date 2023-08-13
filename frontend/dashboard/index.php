@@ -44,8 +44,7 @@ $response = serverQueryNoToken(array(
     <link href="../plugins/daterangepicker/daterangepicker.css" rel="stylesheet" type="text/css"/>
     <link href="../assets/css/app.min.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="../plugins/sweet-alert2/sweetalert2.min.css">
-    <link href="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.3/css/fileinput.min.css" media="all"
-          rel="stylesheet" type="text/css"/>
+
 
     <!-- DataTables -->
     <link href="../plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css"/>
@@ -140,6 +139,7 @@ $response = serverQueryNoToken(array(
             return;
         }
         setPage(window.location.hash);
+        objMapa.Stop();
     }, false);
 
     function setActive(currentHash) {

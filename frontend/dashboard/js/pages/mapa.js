@@ -109,6 +109,8 @@ class Mapa {
     }
 
     async IniciarTracking(){
+        document.getElementById('btniniciar').disabled = true;
+
         let jsonRQ = new jsonRequest('Maps', 'ObtenerCoordenadas');
         this.intervalo = setInterval(async ()=> {
             if(this.marcador){
@@ -127,6 +129,7 @@ class Mapa {
 
     Stop(){
         clearInterval(this.intervalo);
+        document.getElementById('btniniciar').disabled = false;
     }
 
     HistorialXlsx(){

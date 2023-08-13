@@ -15,7 +15,6 @@ use Roles;
 use utils\Functions;
 use utils\ServerData;
 use api\JWTConfig;
-use function MongoDB\BSON\toJSON;
 
 class Maps extends EndPoint{
     public function __construct(Request $request, Response $response)
@@ -77,6 +76,8 @@ class Maps extends EndPoint{
         $payload = $this->request->getPayload();
         $usuario_id = $payload['id'];
 
+        //REMPLAZAR 'latitud' y 'longitud' por:  'ROUND(latitud, 3) AS latitud', 'ROUND(longitud, 3) AS longitud',
+        //Asi se reciben 3 decimales y la precision se redondea
         $data = $this->getSQLDatabase()->dbRead('registros', [
             'id',
             'latitud',
@@ -110,72 +111,6 @@ class Maps extends EndPoint{
             $this->response->printError("No se han encontrado registros en las fechas indicadas");
         }else{
             $this->response->addValue('data', $data)->printResponse();
-        }
-    }
-
-    //Mas abajo esta ESTACIONAMIENTO que esta mejor que este codigo
-    public function Estacionamiento2(){
-        $this->request->checkInput([
-            'fecha_inicio' => DataTypes::string,
-            'fecha_fin' => DataTypes::string,
-            'minutos' => DataTypes::integer,
-            'horario_salida' => DataTypes::boolean
-        ], true);
-        $horarios_salida = $this->request->getValue('horario_salida');
-        $minutos = $this->request->getValue('minutos');
-        $minutos = $minutos * 60;
-        if($horarios_salida){
-            $minutos = 5 * 60;
-        }
-        $payload = $this->request->getPayload();
-        $usuario_id = $payload['id'];
-        $fecha_inicio = $this->request->getValue('fecha_inicio');
-        $fecha_fin = $this->request->getValue('fecha_fin');
-        $data = $this->getSQLDatabase()->dbRead('registros', [
-            'latitud',
-            'longitud',
-            'fecha'
-        ], "WHERE id_usuario = $usuario_id AND fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'" );
-        if(count($data) < 2){
-            $this->response->printError("No se han encontrado estacionamientos en las fechas indicadas");
-        }
-        $estacionamientos = [];
-        $itemestacionamiento = [];
-        for ($i = 1; $i< count($data); $i++){
-            if(($data[$i]['latitud'] == $data[$i-1]['latitud']) && ($data[$i]['longitud'] == $data[$i-1]['longitud'])){
-                array_push($itemestacionamiento, $data[$i-1]);
-                if(count($data) == $i+1){
-                    array_push($itemestacionamiento, $data[$i]);
-                    $fecha1 = new \DateTime($itemestacionamiento[0]['fecha']);
-                    $fecha2 = new \DateTime($itemestacionamiento[count($itemestacionamiento)-1]['fecha']);
-                    $diferencia = $fecha1->diff($fecha2);
-                    $totalSegundos = $diferencia->s + ($diferencia->i * 60) + ($diferencia->h * 3600) + ($diferencia->days * 86400);
-                    if($totalSegundos > $minutos){
-                        $itemestacionamiento[0]["fecha_fin"] = $itemestacionamiento[count($itemestacionamiento)-1]['fecha'];
-                        array_push($estacionamientos, $itemestacionamiento[0]);
-                    }
-                    $itemestacionamiento = [];
-                }
-            }
-            else{
-                if(count($itemestacionamiento) > 0){
-                    array_push($itemestacionamiento, $data[$i-1]);
-                    $fecha1 = new \DateTime($itemestacionamiento[0]['fecha']);
-                    $fecha2 = new \DateTime($itemestacionamiento[count($itemestacionamiento)-1]['fecha']);
-                    $diferencia = $fecha1->diff($fecha2);
-                    $totalSegundos = $diferencia->s + ($diferencia->i * 60) + ($diferencia->h * 3600) + ($diferencia->days * 86400);
-                    if($totalSegundos > $minutos){
-                        $itemestacionamiento[0]["fecha_fin"] = $itemestacionamiento[count($itemestacionamiento)-1]['fecha'];
-                        array_push($estacionamientos, $itemestacionamiento[0]);
-                    }
-                    $itemestacionamiento = [];
-                }
-            }
-        }
-        if(count($estacionamientos) === 0){
-            $this->response->printError("No se han encontrado estacionamientos en las fechas indicadas");
-        }else{
-            $this->response->addValue('data', $estacionamientos)->printResponse();
         }
     }
 
@@ -296,8 +231,8 @@ class Maps extends EndPoint{
         $fecha_inicio = $this->request->getValue('fecha_inicio');
         $fecha_fin = $this->request->getValue('fecha_fin');
         $data = $this->getSQLDatabase()->dbRead('registros', [
-            'latitud',
-            'longitud',
+            'ROUND(latitud, 3) AS latitud',
+            'ROUND(longitud, 3) AS longitud',
             'fecha'
         ], "WHERE id_usuario = $usuario_id AND fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'" );
         if(count($data) < 2){

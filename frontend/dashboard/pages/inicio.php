@@ -21,6 +21,12 @@ $response = serverQuery($token, array(
 
 <body>
 
-Inicio
+
+<div class="row justify-content-center align-items-center" style="min-height: 85%;">
+    <div class="col-md-6 text-center">
+        <img src="https://univercimas.com/wp-content/uploads/2021/05/Logo-de-la-Universidad-Estatal-del-Sur-de-Manabi-UNESUM.jpg" alt="Imagen" class="img-fluid">
+    </div>
+</div>
+
 
 </body>
